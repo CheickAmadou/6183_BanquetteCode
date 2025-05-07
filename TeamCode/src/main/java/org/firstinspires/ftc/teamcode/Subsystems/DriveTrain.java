@@ -21,11 +21,12 @@ public class DriveTrain {
 
         //Are all of the motors going to spin the right direction?
     }
-    public void run(){
-        //run or update are generally methods that run in a loop
-        frontLeftMotor.setPower(.3);
-        backRightMotor.setPower(.3);
-        frontRightMotor.setPower(.3);
-        backLeftMotor.setPower(.3);
+    public void run(double x, double y, double rx){
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        frontLeftMotor.setPower ((y + x + rx) / denominator);
+        backLeftMotor.setPower((y - x + rx) / denominator);
+        frontRightMotor.setPower((y - x - rx) / denominator);
+        backRightMotor.setPower ((y + x - rx) / denominator);
+
     }
 }
