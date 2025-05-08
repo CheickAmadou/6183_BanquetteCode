@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.opencv.core.Mat;
-
-public class Pivot {
+@Config
+public class Rotate {
     public enum States {
         BUCKET,
         CHAMBER,
@@ -31,10 +31,10 @@ public class Pivot {
 
     PIDFController pidfController = new PIDFController(kP, kI, kD, kF);
 
-    DcMotor pivotMotor;
+    DcMotor rotateMotor1;
 
     public void initiate(HardwareMap hardwareMap) {
-        pivotMotor = hardwareMap.dcMotor.get("pivot");
+        rotateMotor1 = hardwareMap.dcMotor.get("rotate1");
         pidfController.setTolerance(positionTolerance);
     }
 
@@ -47,7 +47,7 @@ public class Pivot {
     }
 
     public void reset() {
-        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rotateMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void run(Telemetry telemetry) {
@@ -61,30 +61,30 @@ public class Pivot {
         double power = 0;
         switch (getState()) {
             case CHAMBER:
-                pivotMotor.setTargetPosition(chamberPos);
+                rotateMotor1.setTargetPosition(chamberPos);
                 break;
             case BUCKET:
-                pivotMotor.setTargetPosition(bucketPos);
+                rotateMotor1.setTargetPosition(bucketPos);
                 break;
             case RESTING:
                 maxPower = .1;
-                pivotMotor.setTargetPosition(restingPos);
+                rotateMotor1.setTargetPosition(restingPos);
                 break;
             case DOWN:
-                pivotMotor.setTargetPosition(downPos);
+                rotateMotor1.setTargetPosition(downPos);
                 break;
             case SCOUTING:
-                pivotMotor.setTargetPosition(scoutingPos);
+                rotateMotor1.setTargetPosition(scoutingPos);
                 break;
         }
-        power = pidfController.calculate(pivotMotor.getCurrentPosition(),pivotMotor.getTargetPosition());
+        power = pidfController.calculate(rotateMotor1.getCurrentPosition(), rotateMotor1.getTargetPosition());
         if (Math.abs(power) > maxPower){
             power = Math.signum(power) * maxPower;
         }
 
-        telemetry.addData("PivotState ", getState());
-        telemetry.addData("PivotPos", pivotMotor.getCurrentPosition());
-        telemetry.addData("PivotTarget", pivotMotor.getTargetPosition());
+        telemetry.addData("RotateState ", getState());
+        telemetry.addData("RotatePos", rotateMotor1.getCurrentPosition());
+        telemetry.addData("RotateTarget", rotateMotor1.getTargetPosition());
 
     }
 

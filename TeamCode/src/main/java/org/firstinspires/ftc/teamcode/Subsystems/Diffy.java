@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Config
 public class Diffy {
 
     public enum VerticalRotationStates {
@@ -14,33 +17,34 @@ public class Diffy {
     }
 
     public enum HorizontalRotationStates {
-        //Naming based on orientation of claw for grabbing pieces
-        RIGHT,
+        VERTICAL,
         DIAGONAL_RIGHT,
-        VERTICAl,
-        DIAGONAL_LEFT,
-        LEFT
+        HORIZONTAL,
+        DIAGONAL_LEFT
     }
 
     VerticalRotationStates currentVRot = VerticalRotationStates.FORWARD;
-    HorizontalRotationStates currentHRot = HorizontalRotationStates.VERTICAl;
+    HorizontalRotationStates currentHRot = HorizontalRotationStates.HORIZONTAL;
 
     //Right Side dominant
     Servo rightRotServo;
     Servo leftRotServo;
 
 
+    //Offsets, make horizontal default
+    public static double rightOffset = 0.27;
+    public static double leftOffset = 0.27;
+
     // vRot positions
-    public static double vRotUpward = .8;
-    public static double vRotForward = .5;
-    public static double vRotDownward = .2;
+    public static double vRotUpward = .1;
+    public static double vRotForward = .36;
+    public static double vRotDownward = .57;
 
     // hRot positions (Will be added to vRot)
-    public static double hRotRight = 0.2;
-    public static double hRotDiagonalRight = 0.1;
-    public static double hRotVertical = 0;
-    public static double hRotDiagonalLeft = -.1;
-    public static double hRotLeft = -.2;
+    public static double hRotVertical = -.25;
+    public static double hRotDiagonalRight = -.12;
+    public static double hRotHorizontal = 0;
+    public static double hRotDiagonalLeft = -.09;
 
     //Get states
 
@@ -63,51 +67,94 @@ public class Diffy {
     }
 
     public void initiate(HardwareMap hardwareMap) {
-        rightRotServo = hardwareMap.servo.get("rightRot");
-        leftRotServo = hardwareMap.servo.get("leftRot");
+        rightRotServo = hardwareMap.servo.get("right");
+        leftRotServo = hardwareMap.servo.get("left");
     }
 
+    boolean hRotCDR = false;
+    boolean hRotCDL = false;
+
+    public void setDiffy(boolean dLeft, boolean dRight, boolean dUp, boolean dDown){
+        if (dRight && !hRotCDR){
+            switch (getHRot()) {
+                case DIAGONAL_LEFT:
+                    setHRot(Diffy.HorizontalRotationStates.HORIZONTAL);
+                    break;
+                case HORIZONTAL:
+                    setHRot(Diffy.HorizontalRotationStates.DIAGONAL_RIGHT);
+                    break;
+                case DIAGONAL_RIGHT:
+                    setHRot(Diffy.HorizontalRotationStates.VERTICAL);
+                    break;
+            }
+            hRotCDR = true;
+        }else if (!dRight){
+            hRotCDR = false;
+        }
+        if (dLeft && !hRotCDL){
+            switch (getHRot()) {
+                case HORIZONTAL:
+                    setHRot(HorizontalRotationStates.DIAGONAL_LEFT);
+                    break;
+                case DIAGONAL_RIGHT:
+                    setHRot(HorizontalRotationStates.HORIZONTAL);
+                    break;
+                case VERTICAL:
+                    setHRot(HorizontalRotationStates.DIAGONAL_RIGHT);
+                    break;
+            }
+            hRotCDL = true;
+        }else if (!dLeft){
+            hRotCDL = false;
+        }
+    }
+
+
     public void run(Telemetry telemetry) {
-        telemetry.addData("RRot", getVRot());
+        telemetry.addData("VRot", getVRot());
         telemetry.addData("RRot Position", rightRotServo.getPosition());
-        telemetry.addData("LRot", getHRot());
+        telemetry.addData("HRot", getHRot());
         telemetry.addData("LRot Position", leftRotServo.getPosition());
 
+
+
+
+
+
+
+
+
+
+
+        double vRotPos = vRotForward;
         switch (getVRot()) {
             case UPWARD:
-                rightRotServo.setPosition(vRotUpward);
+                vRotPos = (vRotUpward);
                 break;
             case FORWARD:
-                rightRotServo.setPosition(vRotForward);
+                vRotPos = (vRotForward);
                 break;
             case DOWNWARD:
-                rightRotServo.setPosition(vRotDownward);
+                vRotPos = (vRotDownward);
                 break;
         }
-        leftRotServo.setPosition(1 - rightRotServo.getPosition());
-
+        double hRotPos = 0;
         switch (getHRot()){
-            case LEFT:
-                rightRotServo.setPosition(rightRotServo.getPosition() + hRotLeft);
-                leftRotServo.setPosition(leftRotServo.getPosition() - hRotLeft);
-                break;
             case DIAGONAL_LEFT:
-                rightRotServo.setPosition(rightRotServo.getPosition() + hRotDiagonalLeft);
-                leftRotServo.setPosition(leftRotServo.getPosition() - hRotDiagonalLeft);
+                hRotPos = hRotDiagonalLeft;
                 break;
-            case VERTICAl:
-                rightRotServo.setPosition(rightRotServo.getPosition() + hRotVertical);
-                leftRotServo.setPosition(leftRotServo.getPosition() - hRotVertical);
+            case HORIZONTAL:
+                hRotPos = hRotHorizontal;
                 break;
             case DIAGONAL_RIGHT:
-                rightRotServo.setPosition(rightRotServo.getPosition() + hRotDiagonalRight);
-                leftRotServo.setPosition(leftRotServo.getPosition() - hRotDiagonalRight);
+                hRotPos = hRotDiagonalRight;
                 break;
-            case RIGHT:
-                rightRotServo.setPosition(rightRotServo.getPosition() + hRotRight);
-                leftRotServo.setPosition(leftRotServo.getPosition() - hRotRight);
+            case VERTICAL:
+                hRotPos = hRotVertical;;
                 break;
         }
+        rightRotServo.setPosition(vRotPos + hRotPos + rightOffset);
+        leftRotServo.setPosition((1 -vRotPos) + hRotPos + leftOffset);
 
     }
 }

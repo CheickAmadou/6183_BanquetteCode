@@ -9,10 +9,10 @@ public class DriveTrain {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     public void initiate(HardwareMap hardwareMap){
-        frontLeftMotor = hardwareMap.dcMotor.get("motor0");
-        frontRightMotor = hardwareMap.dcMotor.get("motor1");
-        backLeftMotor = hardwareMap.dcMotor.get("motor2");
-        backRightMotor = hardwareMap.dcMotor.get("motor3");
+        frontLeftMotor = hardwareMap.dcMotor.get("fl");
+        frontRightMotor = hardwareMap.dcMotor.get("fr");
+        backLeftMotor = hardwareMap.dcMotor.get("bl");
+        backRightMotor = hardwareMap.dcMotor.get("br");
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
