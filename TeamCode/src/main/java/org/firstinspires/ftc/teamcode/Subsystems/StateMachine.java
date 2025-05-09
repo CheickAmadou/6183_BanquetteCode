@@ -46,19 +46,19 @@ public class StateMachine {
                     newState = RobotState.HUMAN_INTAKE;
                     break;
                 case SCOUTING:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
                 case INTAKING:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
                 case HUMAN_INTAKE:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
                 case CHAMBER:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
                 case BUCKET:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
             }
             LTCD = true;
@@ -73,16 +73,16 @@ public class StateMachine {
                 case CHAMBER:
                 case BUCKET:
                     if (claw.getGrab() == Claw.States.CLOSE) {
-                        flipClaw(claw);
+                        claw.grab();
                     } else {
                         newState = RobotState.RESTING;
                     }
                     break;
                 case INTAKING:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
                 case HUMAN_INTAKE:
-                    flipClaw(claw);
+                    claw.grab();
                     break;
             }
             RTCD = true;
@@ -95,17 +95,6 @@ public class StateMachine {
         }
 
         currentState = newState;
-    }
-
-    public void flipClaw(Claw claw) {
-        switch (claw.getGrab()) {
-            case OPEN:
-                claw.setGrab(Claw.States.CLOSE);
-                break;
-            case CLOSE:
-                claw.setGrab(Claw.States.OPEN);
-                break;
-        }
     }
 
     public RobotState getState() {

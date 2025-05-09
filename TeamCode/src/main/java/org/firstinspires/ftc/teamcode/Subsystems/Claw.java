@@ -29,6 +29,7 @@ public class Claw {
     public void setGrab(States input) {
         timeSnapshot = System.currentTimeMillis();
         currentGrab = input;
+        grab();
     }
 
     public void initiate(HardwareMap hardwareMap) {
@@ -59,14 +60,18 @@ public class Claw {
             if (difference > cooldownTimeInMiliS){
                 timeSnapshot = System.currentTimeMillis();
             }
-            switch (getGrab()) {
-                case CLOSE:
-                    grabServo.setPosition(grabClose);
-                    break;
-                case OPEN:
-                    grabServo.setPosition(grabOpen);
-                    break;
-            }
+            grab();
+        }
+    }
+
+    public void grab(){
+        switch (getGrab()) {
+            case CLOSE:
+                grabServo.setPosition(grabClose);
+                break;
+            case OPEN:
+                grabServo.setPosition(grabOpen);
+                break;
         }
     }
 
