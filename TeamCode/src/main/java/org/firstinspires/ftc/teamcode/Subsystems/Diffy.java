@@ -36,7 +36,7 @@ public class Diffy {
     public static double leftOffset = 0.27;
 
     // vRot positions
-    public static double vRotUpward = .1;
+    public static double vRotUpward = .27;
     public static double vRotForward = .36;
     public static double vRotDownward = .57;
 
@@ -44,7 +44,7 @@ public class Diffy {
     public static double hRotVertical = -.25;
     public static double hRotDiagonalRight = -.12;
     public static double hRotHorizontal = 0;
-    public static double hRotDiagonalLeft = -.09;
+    public static double hRotDiagonalLeft = .09;
 
     //Get states
 
@@ -73,9 +73,11 @@ public class Diffy {
 
     boolean hRotCDR = false;
     boolean hRotCDL = false;
+    boolean vRotCDU = false;
+    boolean vRotCDD = false;
 
-    public void setDiffy(boolean dLeft, boolean dRight, boolean dUp, boolean dDown){
-        if (dRight && !hRotCDR){
+    public void setDiffy(boolean dLeft, boolean dRight, boolean dUp, boolean dDown) {
+        if (dRight && !hRotCDR) {
             switch (getHRot()) {
                 case DIAGONAL_LEFT:
                     setHRot(Diffy.HorizontalRotationStates.HORIZONTAL);
@@ -88,10 +90,10 @@ public class Diffy {
                     break;
             }
             hRotCDR = true;
-        }else if (!dRight){
+        } else if (!dRight) {
             hRotCDR = false;
         }
-        if (dLeft && !hRotCDL){
+        if (dLeft && !hRotCDL) {
             switch (getHRot()) {
                 case HORIZONTAL:
                     setHRot(HorizontalRotationStates.DIAGONAL_LEFT);
@@ -104,28 +106,44 @@ public class Diffy {
                     break;
             }
             hRotCDL = true;
-        }else if (!dLeft){
+        } else if (!dLeft) {
             hRotCDL = false;
         }
+
+
+        if (dUp && !vRotCDU) {
+            switch (getVRot()) {
+                case DOWNWARD:
+                    setVRot(Diffy.VerticalRotationStates.FORWARD);
+                    break;
+                case FORWARD:
+                    setVRot(Diffy.VerticalRotationStates.UPWARD);
+                    break;
+            }
+            vRotCDU = true;
+        } else if (!dUp) {
+            vRotCDU = false;
+        }
+
+        if (dDown && !vRotCDD) {
+            switch (getVRot()) {
+                case UPWARD:
+                    setVRot(Diffy.VerticalRotationStates.FORWARD);
+                    break;
+                case FORWARD:
+                    setVRot(Diffy.VerticalRotationStates.DOWNWARD);
+                    break;
+            }
+            vRotCDD = true;
+        } else if (!dDown) {
+            vRotCDD = false;
+        }
+
+
     }
 
 
-    public void run(Telemetry telemetry) {
-        telemetry.addData("VRot", getVRot());
-        telemetry.addData("RRot Position", rightRotServo.getPosition());
-        telemetry.addData("HRot", getHRot());
-        telemetry.addData("LRot Position", leftRotServo.getPosition());
-
-
-
-
-
-
-
-
-
-
-
+    public void run() {
         double vRotPos = vRotForward;
         switch (getVRot()) {
             case UPWARD:
@@ -139,7 +157,7 @@ public class Diffy {
                 break;
         }
         double hRotPos = 0;
-        switch (getHRot()){
+        switch (getHRot()) {
             case DIAGONAL_LEFT:
                 hRotPos = hRotDiagonalLeft;
                 break;
@@ -150,11 +168,21 @@ public class Diffy {
                 hRotPos = hRotDiagonalRight;
                 break;
             case VERTICAL:
-                hRotPos = hRotVertical;;
+                hRotPos = hRotVertical;
+                ;
                 break;
         }
-        rightRotServo.setPosition(vRotPos + hRotPos + rightOffset);
-        leftRotServo.setPosition((1 -vRotPos) + hRotPos + leftOffset);
 
+
+        rightRotServo.setPosition(vRotPos + hRotPos + rightOffset);
+        leftRotServo.setPosition((1 - vRotPos) + hRotPos + leftOffset);
+
+    }
+
+    public void status(Telemetry telemetry) {
+        telemetry.addData("VRot", getVRot());
+        telemetry.addData("RRot Position", rightRotServo.getPosition());
+        telemetry.addData("HRot", getHRot());
+        telemetry.addData("LRot Position", leftRotServo.getPosition());
     }
 }
