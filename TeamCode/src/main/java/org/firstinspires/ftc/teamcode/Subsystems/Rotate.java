@@ -28,6 +28,13 @@ public class Rotate {
     public static int scoutingPos = -2700;
     public static int downPos = -2900;
 
+    private static int targetPosition;
+
+    //setter for target position
+    public void setTargetPosition(int target) {
+        targetPosition = target;
+    }
+
     public static double kP = -0.003;
     public static double kI = 0;
     public static double kD = 0;
@@ -55,6 +62,8 @@ public class Rotate {
 
     public void reset() {
         rotateMotor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rotateMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rotateMotor1.setDirection(DcMotor.Direction.REVERSE);
     }
 
     boolean rotateCDF = false;
@@ -112,6 +121,8 @@ public class Rotate {
 
         double maxPower = 1;
         double power = 0;
+
+        /*
         switch (getState()) {
             case INIT:
                 maxPower = .5;
@@ -136,6 +147,7 @@ public class Rotate {
                 rotateMotor1.setTargetPosition(humanIntakePos);
                 break;
         }
+        */
         power = pidfController.calculate(rotateMotor1.getCurrentPosition(), rotateMotor1.getTargetPosition());
         if (Math.abs(power) > maxPower) {
             power = (Math.signum(power) * maxPower);
@@ -149,7 +161,8 @@ public class Rotate {
         telemetry.addData("RotateState ", getState());
         telemetry.addData("RotatePos", rotateMotor1.getCurrentPosition());
         telemetry.addData("RotateTarget", rotateMotor1.getTargetPosition());
-        telemetry.addData("RotatePower", rotateMotor1.getPower());
+        telemetry.addData("Rotate Power 1", rotateMotor1.getPower());
+        telemetry.addData("Rotate Power 2", rotateMotor2.getPower());
     }
 
 }

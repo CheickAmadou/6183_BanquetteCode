@@ -70,13 +70,14 @@ public class Diffy {
         rightRotServo = hardwareMap.servo.get("right");
         leftRotServo = hardwareMap.servo.get("left");
     }
-
+    //Cooldown for diffy
     boolean hRotCDR = false;
     boolean hRotCDL = false;
     boolean vRotCDU = false;
     boolean vRotCDD = false;
 
     public void setDiffy(boolean dLeft, boolean dRight, boolean dUp, boolean dDown) {
+
         if (dRight && !hRotCDR) {
             switch (getHRot()) {
                 case DIAGONAL_LEFT:

@@ -15,8 +15,22 @@ public class Extendo {
     }
 
     States currentState = States.RETRACTED;
-    public static int retractedPos = 0;
-    public static int bucketPos = 700;
+    private int retractedPos = 0;
+    private int bucketPos = 450;
+
+    //Setters and Getters
+    public int getRetractedPos() {
+        return retractedPos;
+    }
+    public void setRetractedPos(int input) {
+        retractedPos = input;
+    }
+    public int getBucketPos() {
+        return bucketPos;
+    }
+    public void setBucketPos(int input) {
+        bucketPos = input;
+    }
 
     public static double kP = 0.005;
     public static double kI = 0;
@@ -32,6 +46,8 @@ public class Extendo {
     public void initiate(HardwareMap hardwareMap) {
         extendoMotor1 = hardwareMap.dcMotor.get("extend1");
         extendoMotor2 = hardwareMap.dcMotor.get("extend2");
+        extendoMotor2.setDirection(DcMotor.Direction.REVERSE);
+
         pidfController.setTolerance(positionTolerance);
         //Reset encoder on startup
         reset();

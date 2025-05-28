@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
 import org.firstinspires.ftc.teamcode.Subsystems.Rotate;
 
 @TeleOp
-public class SubsystemBased extends LinearOpMode {
+public class
+SubsystemBased extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -32,7 +33,6 @@ public class SubsystemBased extends LinearOpMode {
             rotate.run();
         }
 
-        waitForStart();
         rotate.setState(Rotate.States.RESTING);
 
         if (isStopRequested()){
